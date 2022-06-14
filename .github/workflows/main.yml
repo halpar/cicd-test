@@ -1,7 +1,7 @@
 name: Build project
 
 on: [push, pull_request]
-
+#cmcmcmc
 jobs:
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}

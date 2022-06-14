@@ -1,0 +1,2 @@
+- This folder should only contain only scenes and related files(lightbake, settings, cullingdata) that should be included in the build.
+- Scene order will be done automatically by name

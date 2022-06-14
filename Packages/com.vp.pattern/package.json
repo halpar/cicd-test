@@ -1,0 +1,19 @@
+{
+  "name": "com.vp.pattern",
+  "version": "0.3.0",
+  "displayName": "VP Pattern",
+  "description": "Fast prototype mobile games",
+  "unity": "2020.2",
+  "unityRelease": "2f2",
+  "keywords": [
+    "VP",
+    "Pattern",
+    "MobileGame"
+  ],
+  "author": {
+    "name": "Virtual Projects",
+    "email": "info@kartektechnologies.com",
+    "url": "https://www.virtualprojects.co"
+  },
+  "type": "template"
+}

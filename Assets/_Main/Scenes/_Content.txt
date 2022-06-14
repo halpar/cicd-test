@@ -1,0 +1,10 @@
+
+- A_SceneName -> no not create Scene start with "A" keyword.
+- B_SceneName -> Only development scene name start with "B".
+
+- G_SceneName -> Only InGame gameplay scene name start with "G".
+
+- T_SceneName -> Only InGame Tutorial gameplay scene name start with "T".
+
+- O_SceneName -> Only InGame Other("main menu, event scene, etc.") scene name start with "O".
+

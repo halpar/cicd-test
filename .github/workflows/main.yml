@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-          - iOS
+          - iOS # Build an iOS player.
     steps:
       - uses: actions/checkout@v2
         with:

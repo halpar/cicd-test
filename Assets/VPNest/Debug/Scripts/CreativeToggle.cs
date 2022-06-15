@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using VP.Nest.SceneManagement;
 
-namespace VP.Nest.DebugSystems
+namespace VP.Nest.CreativeBuild
 {
     public class CreativeToggle : MonoBehaviour
     {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,102 +11,116 @@ using VP.Nest.UI;
 
 namespace VP.Nest.UI.InGame
 {
-    public class InGameUI : MonoBehaviour
-    {
-        private Transform InGameUIPanel;
+	public class InGameUI : MonoBehaviour
+	{
+		private Transform InGameUIPanel;
 
-        private EventTrigger tapToStartEventTrigger;
-        private Button tapToRetryBtn;
-        private Button tapToContinueBtn;
-        private GameObject successPanel;
-        private GameObject failPanel;
+		private EventTrigger tapToStartEventTrigger;
+		private Button tapToRetryBtn;
+		private Button tapToContinueBtn;
+		private GameObject successPanel;
+		private GameObject failPanel;
 
-        private TextMeshProUGUI levelText;
+		private TextMeshProUGUI levelText;
 
-        private FillBar fillBar;
+		private FillBar fillBar;
 
-        private bool isStarted, isContinue, isRetry, isTyringLoadScene;
+		private bool isStarted, isContinue, isRetry, isTyringLoadScene;
 
-        public UnityAction OnLevelStart;
+		public UnityAction OnLevelStart;
 
-        public FillBar FillBar
-        {
-            get
-            {
-                if (fillBar == null)
-                    fillBar = GetComponentInChildren<FillBar>();
-                if (fillBar == null)
-                    Debug.Log("FillBar is missing! Try SetActive UISystems/InGameUI/Fillbar gameobject");
-                return fillBar;
-            }
-        }
+		public FillBar FillBar {
+			get {
+				if (fillBar == null)
+					fillBar = GetComponentInChildren<FillBar>();
+				if (fillBar == null)
+					Debug.Log("FillBar is missing! . Try SetActive UISystems/InGameUI/Fillbar gameobject");
+				return fillBar;
+			}
+		}
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            InGameUIPanel = transform;
+		// Start is called before the first frame update
+		void Start()
+		{
+			InGameUIPanel = transform;
 
-            levelText = InGameUIPanel.Find("LevelBar").GetComponentInChildren<TextMeshProUGUI>();
-            tapToStartEventTrigger = InGameUIPanel.Find("FullscreenTapToStart").GetComponent<EventTrigger>();
-            failPanel = InGameUIPanel.Find("FullscreenFail").gameObject;
-            tapToRetryBtn = failPanel.GetComponentInChildren<Button>();
-            successPanel = InGameUIPanel.Find("FullscreenSuccess").gameObject;
-            tapToContinueBtn = successPanel.GetComponentInChildren<Button>();
+			levelText = InGameUIPanel.Find("LevelBar").GetComponentInChildren<TextMeshProUGUI>();
+			tapToStartEventTrigger = InGameUIPanel.Find("FullscreenTapToStart").GetComponent<EventTrigger>();
+			failPanel = InGameUIPanel.Find("FullscreenFail").gameObject;
+			tapToRetryBtn = failPanel.GetComponentInChildren<Button>();
+			successPanel = InGameUIPanel.Find("FullscreenSuccess").gameObject;
+			tapToContinueBtn = successPanel.GetComponentInChildren<Button>();
 
-            levelText.SetText("LEVEL " + PlayerPrefKeys.CurrentLevel.ToString());
+			levelText.SetText("LEVEL " + PlayerPrefKeys.CurrentLevel.ToString());
 
-            tapToContinueBtn.onClick.AddListener(TapToContinue);
-            tapToRetryBtn.onClick.AddListener(TapToRetry);
+			tapToContinueBtn.onClick.AddListener(TapToContinue);
+			tapToRetryBtn.onClick.AddListener(TapToRetry);
 
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerDown;
-            entry.callback.AddListener((eventData) => { TapToStart(); });
-            tapToStartEventTrigger.triggers.Add(entry);
+			EventTrigger.Entry entry = new EventTrigger.Entry();
+			entry.eventID = EventTriggerType.PointerDown;
+			entry.callback.AddListener((eventData) => { TapToStart(); });
+			tapToStartEventTrigger.triggers.Add(entry);
 
-            successPanel.SetActive(false);
-            failPanel.SetActive(false);
-            tapToStartEventTrigger.gameObject.SetActive(true);
-        }
+			successPanel.SetActive(false);
+			failPanel.SetActive(false);
+			tapToStartEventTrigger.gameObject.SetActive(true);
+		}
 
-        internal void OpenSuccessPanel()
-        {
-            successPanel.SetActive(true);
-        }
+		private void Update()
+		{
+#if UNITY_EDITOR
+			if (Input.GetKeyDown(KeyCode.S))
+				SuccessGame();
+			if (Input.GetKeyDown(KeyCode.F))
+				FailGame();
+#endif
+		}
 
-        internal void OpenFailPanel()
-        {
-            failPanel.SetActive(true);
-        }
 
-        private void TapToContinue()
-        {
-            if (!isTyringLoadScene)
-            {
-                isTyringLoadScene = true;
+		private void TapToContinue()
+		{
+			if (!isTyringLoadScene) {
+				isTyringLoadScene = true;
 
-                GameManager.Instance.LoadCurrentLevelScene();
-            }
-        }
+				GameManager.Instance.LoadCurrentLevelScene();
+			}
+		}
 
-        private void TapToRetry()
-        {
-            if (!isTyringLoadScene)
-            {
-                isTyringLoadScene = true;
+		private void TapToRetry()
+		{
+			if (!isTyringLoadScene) {
+				isTyringLoadScene = true;
 
-                GameManager.Instance.LoadCurrentLevelScene();
-            }
-        }
+				GameManager.Instance.LoadCurrentLevelScene();
+			}
+		}
 
-        private void TapToStart()
-        {
-            if (!isStarted)
-            {
-                isStarted = true;
-                OnLevelStart?.Invoke();
-                tapToStartEventTrigger.gameObject.SetActive(false);
-                LevelManager.StartLevel();
-            }
-        }
-    }
+		private void TapToStart()
+		{
+			if (!isStarted) {
+				isStarted = true;
+				OnLevelStart?.Invoke();
+				tapToStartEventTrigger.gameObject.SetActive(false);
+				LevelManager.StartLevel();
+			}
+		}
+
+		public void SuccessGame()
+		{
+			if (!isContinue) {
+				successPanel.SetActive(true);
+				LevelManager.InitLevelComplete();
+				isContinue = true;
+			}
+		}
+
+		public void FailGame()
+		{
+			if (!isRetry) {
+				failPanel.SetActive(true);
+				LevelManager.InitLevelFail();
+				isRetry = true;
+			}
+		}
+	}
 }

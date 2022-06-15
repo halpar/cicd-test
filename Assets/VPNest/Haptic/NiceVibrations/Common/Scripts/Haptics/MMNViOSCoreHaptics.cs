@@ -23,6 +23,7 @@ namespace MoreMountains.NiceVibrations
         private static float _initialContinuousIntensity;
         private static float _initialContinuousSharpness;
 
+#if UNITY_IOS && !UNITY_EDITOR
         [DllImport("__Internal")]
         private static extern bool MMNViOS_CoreHapticsSupported();
         [DllImport("__Internal")]
@@ -47,19 +48,20 @@ namespace MoreMountains.NiceVibrations
         private static extern void MMNViOS_CoreHapticsRegisterHapticEngineResetCallback(Action callback);
         [DllImport("__Internal")]
         private static extern void MMNViOS_CoreHapticsSetDebugMode(bool status);
-
-        // private static bool MMNViOS_CoreHapticsSupported() { return false; }
-        // private static void MMNViOS_CoreHapticsSetDebugMode(bool status) { }
-        // private static void MMNViOS_CreateEngine() { }
-        // private static void MMNViOS_StopEngine() { }
-        // private static void MMNViOS_PlayTransientHapticPattern(float intensity, float sharpness, bool threaded) { }
-        // private static void MMNViOS_PlayContinuousHapticPattern(float intensity, float sharpness, float duration, bool threaded, bool fullIntensity) { }
-        // private static void MMNViOS_UpdateContinuousHapticPattern(float intensity, float sharpness, bool threaded) { }
-        // private static void MMNViOS_StopContinuousHaptic() { }
-        // private static void MMNViOS_PlayCoreHapticsFromJSON(string jsonString, bool threaded) { }
-        // private static void MMNViOS_CoreHapticsRegisterHapticEngineFinishedCallback(Action callback) { }
-        // private static void MMNViOS_CoreHapticsRegisterHapticEngineErrorCallback(Action callback) { }
-        // private static void MMNViOS_CoreHapticsRegisterHapticEngineResetCallback(Action callback) { }
+#else
+        private static bool MMNViOS_CoreHapticsSupported() { return false; }
+        private static void MMNViOS_CoreHapticsSetDebugMode(bool status) { }
+        private static void MMNViOS_CreateEngine() { }
+        private static void MMNViOS_StopEngine() { }
+        private static void MMNViOS_PlayTransientHapticPattern(float intensity, float sharpness, bool threaded) { }
+        private static void MMNViOS_PlayContinuousHapticPattern(float intensity, float sharpness, float duration, bool threaded, bool fullIntensity) { }
+        private static void MMNViOS_UpdateContinuousHapticPattern(float intensity, float sharpness, bool threaded) { }
+        private static void MMNViOS_StopContinuousHaptic() { }
+        private static void MMNViOS_PlayCoreHapticsFromJSON(string jsonString, bool threaded) { }
+        private static void MMNViOS_CoreHapticsRegisterHapticEngineFinishedCallback(Action callback) { }
+        private static void MMNViOS_CoreHapticsRegisterHapticEngineErrorCallback(Action callback) { }
+        private static void MMNViOS_CoreHapticsRegisterHapticEngineResetCallback(Action callback) { }
+#endif
 
         /// <summary>
         /// On construction we initialize our haptic engine

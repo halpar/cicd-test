@@ -79,7 +79,6 @@ namespace MoreMountains.NiceVibrations
             else
             {
                 AndroidVibrationEffectClassInitialization();
-                
                 VibrationEffect = VibrationEffectClass.CallStatic<AndroidJavaObject>("createOneShot", new object[] { milliseconds, amplitude });
                 AndroidVibrator.Call("vibrate", VibrationEffect);
             }
@@ -107,16 +106,9 @@ namespace MoreMountains.NiceVibrations
             }
             else
             {
-                AndroidVibrationEffectClassInitialization(); 
-                try
-                {
-                    VibrationEffect = VibrationEffectClass.CallStatic<AndroidJavaObject>("createWaveform", new object[] { pattern, repeat });
-                    AndroidVibrator.Call("vibrate", VibrationEffect);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                }
+                AndroidVibrationEffectClassInitialization();
+                VibrationEffect = VibrationEffectClass.CallStatic<AndroidJavaObject>("createWaveform", new object[] { pattern, repeat });
+                AndroidVibrator.Call("vibrate", VibrationEffect);
             }
         }
 
@@ -131,11 +123,6 @@ namespace MoreMountains.NiceVibrations
             if (!MMNVPlatform.Android()) { return; }
             
             if ((pattern == null) || (amplitudes == null))
-            {
-                return;
-            }
-
-            if ((pattern.Length == 0) || (amplitudes.Length == 0))
             {
                 return;
             }

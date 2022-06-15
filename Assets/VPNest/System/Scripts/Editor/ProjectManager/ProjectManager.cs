@@ -37,7 +37,7 @@ namespace VP.Nest.System.Editor
             // }
 
 
-            EditorSceneManager.OpenScene(GameSettings.SelectedSceneLoadSettings.splashScene.ScenePath);
+            //EditorSceneManager.OpenScene("Assets/_Main/Scenes/Build/A_SplashScene.unity");
             // Switch build target to iOS
             EditorUserBuildSettings.SwitchActiveBuildTargetAsync(BuildTargetGroup.iOS, BuildTarget.iOS);
         }
@@ -53,7 +53,8 @@ namespace VP.Nest.System.Editor
                 BuildTarget.Android => BuildTargetGroup.Android,
                 _ => BuildTargetGroup.Unknown
             };
-
+            var bundleIdProductNamePart = PlayerSettings.productName.ToLower();
+            PlayerSettings.SetApplicationIdentifier(buildTargetGroup, $"com.asg.{bundleIdProductNamePart}");
             PlayerSettings.SetApiCompatibilityLevel(buildTargetGroup, ApiCompatibilityLevel.NET_4_6);
             PlayerSettings.SetScriptingBackend(buildTargetGroup, ScriptingImplementation.IL2CPP);
 
@@ -67,7 +68,7 @@ namespace VP.Nest.System.Editor
             else if (target == BuildTarget.Android)
             {
                 PlayerSettings.Android.bundleVersionCode = 1;
-                //PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
+                PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel29;
                 PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
                 //TODO: Nice Vibrations Permission to Manifest File
@@ -78,6 +79,47 @@ namespace VP.Nest.System.Editor
             string iconPath = AssetDatabase.GetAssetPath(GameConfigsSO.GetGameConfigsSO().icon);
             var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(iconPath);
             PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new[] { icon });
+
+            // Edit & Assign Quality Settings
+            var settingIndex = Array.IndexOf(QualitySettings.names, "Medium");
+            QualitySettings.SetQualityLevel(settingIndex, true);
+            QualitySettings.shadows = ShadowQuality.HardOnly;
+            QualitySettings.shadowResolution = ShadowResolution.VeryHigh;
+            //QualitySettings.shadowProjection = ShadowProjection.StableFit;
+            //QualitySettings.shadowDistance = 100;
+            QualitySettings.shadowNearPlaneOffset = 0;
+            QualitySettings.shadowCascades = 0;
+
+            // Add initial scenes to build settings and Open Splash Scene
+            // var currentScenes = EditorBuildSettings.scenes;
+            // var guids = AssetDatabase.FindAssets("t:Scene");
+            // foreach (var guid in guids)
+            // {
+            //     var scenePath = AssetDatabase.GUIDToAssetPath(guid);
+            //     var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+            //     if (!sceneAsset.name.Contains("A_SplashScene") && !sceneAsset.name.Contains("B_GameScene")) continue;
+            //
+            //     var canContiune = true;
+            //     foreach (var buildSettingsScene in currentScenes)
+            //     {
+            //         if (buildSettingsScene.path.Contains(sceneAsset.name))
+            //             canContiune = false;
+            //     }
+            //
+            //     if (!canContiune)
+            //         continue;
+            //
+            //     var scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes)
+            //     {
+            //         new EditorBuildSettingsScene(scenePath, true)
+            //     };
+            //     EditorBuildSettings.scenes = scenes.ToArray();
+            //
+            //     if (sceneAsset.name.Contains("A_SplashScene"))
+            //     {
+            //         EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            //     }
+            // }
 
             // Save
             SaveSettingsValues();

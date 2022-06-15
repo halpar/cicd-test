@@ -15,4 +15,3 @@ MonoBehaviour:
   SelectedSceneLoadSettings: {fileID: 11400000, guid: 5c378c0376c204c82b90581610562b7a,
     type: 2}
   IsUsingLevelScene: 0
-  IsDebugBuild: 1

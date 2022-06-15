@@ -1,4 +1,7 @@
+
+using System;
 using UnityEngine;
+using VP.Nest;
 using DG.Tweening;
 using UnityEngine.Events;
 
@@ -7,7 +10,7 @@ namespace VP.Nest.UI.Currency
 	public class MoneyIconAnimations : MonoBehaviour
 	{
 		public Transform target;
-		public float duration => UIManager.Instance.CurrencyUI.moneyAnimationDuration;
+		public float duration = 2;
 
 		public UnityEvent onComplete;
 
@@ -17,13 +20,21 @@ namespace VP.Nest.UI.Currency
 		{
 			startPos = transform.position;
 
-			transform.DOLocalRotate(Vector3.forward * Random.Range(180, 720), duration,RotateMode.FastBeyond360).SetEase(Ease.InExpo);
-			transform.DOMove(target.position, duration).SetEase(Ease.InBack).OnComplete(() => onComplete?.Invoke());
+			transform.DOMove(target.position, duration).SetEase(Ease.InBack).OnComplete(() => {
+
+				onComplete?.Invoke();
+			});
+
 		}
 
 		private void OnDisable()
 		{
 			transform.position = startPos;
 		}
+
 	}
+
+
 }
+
+

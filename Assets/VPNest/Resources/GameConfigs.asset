@@ -12,13 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef735f5bd998c4b919cae0a2fb05d18e, type: 3}
   m_Name: GameConfigs
   m_EditorClassIdentifier: 
-  companyName: DT Games
-  teamID: S49JT96D3D
+  companyName: AS Games
+  teamID: CB86N69TKK
   productName: Template
   bundleID: com.asg.template
   version: 0.0.1
-  elephantGameID: template_elephant_id
-  elephantGameSecret: template_elephant_secret
-  facebookAppID: template_facebook_id
-  buildNo: 3
-  icon: {fileID: 2800000, guid: 103b0ddcd1ac74f3abbdf2f38dd2c566, type: 3}
+  buildNo: 0
+  icon: {fileID: 2800000, guid: 791194eac7093473c9d5ac66422038a7, type: 3}

@@ -1,10 +1,5 @@
-
-- A_SceneName -> no not create Scene start with "A" keyword.
-- B_SceneName -> Only development scene name start with "B".
-
-- G_SceneName -> Only InGame gameplay scene name start with "G".
-
-- T_SceneName -> Only InGame Tutorial gameplay scene name start with "T".
-
-- O_SceneName -> Only InGame Other("main menu, event scene, etc.") scene name start with "O".
-
+- Duplicate B_GameScene_### to create more Game Play scenes.
+- Use D_TestScene to test and try things.
+- Before submission all of the scenes must:
+    - Have Auto Generate Lighting Off + Baked Lights
+    - Have NavMesh Bake, if scene is using Navigation System

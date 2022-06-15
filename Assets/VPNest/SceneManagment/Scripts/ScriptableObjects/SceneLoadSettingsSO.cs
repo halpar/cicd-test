@@ -3,7 +3,6 @@ using UnityEngine;
 using VP.Nest;
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEngine.SceneManagement;
 
 #endif
 
@@ -20,14 +19,6 @@ public class SceneLoadSettingsSO : ScriptableObject
 
 
 #if UNITY_EDITOR
-
-    public void SetGameSceneList(List<string> _gameSceneList) => SetSceneList(_gameSceneList, gameSceneList);
-
-    public void SetTutorialSceneList(List<string> _tutorialSceneList) =>
-        SetSceneList(_tutorialSceneList, tutorialScenes);
-
-    public void SetOtherSceneList(List<string> _otherSceneList) => SetSceneList(_otherSceneList, otherScenes);
-
 
     public string[] GetUniqueScenesPaths()
     {
@@ -90,7 +81,8 @@ public class SceneLoadSettingsSO : ScriptableObject
         return sceneAssets.ToArray();
     }
 
-    [MenuItem("Nest/Game Settings/Selected Scene Load Settings", false, 15)]
+
+    [MenuItem("Nest/Game Settings/Selected Scene Load Settings")]
     public static void Settings()
     {
         var settings = GameSettings.SelectedSceneLoadSettings;
@@ -101,34 +93,6 @@ public class SceneLoadSettingsSO : ScriptableObject
         }
     }
 
-    public static void SetSplashScene()
-    {
-        var settings = GameSettings.SelectedSceneLoadSettings;
-        settings.SetSplashScene("Assets/_Main/Scenes/Build/A_SplashScene.unity");
-    }
-
-    private void SetSceneList(List<string> newSceneList, List<SceneReference> referencesList)
-    {
-        referencesList.Clear();
-        for (int i = 0; i < newSceneList.Count; i++)
-        {
-            var sceneRef = new SceneReference
-            {
-                ScenePath = newSceneList[i]
-            };
-
-            referencesList.Add(sceneRef);
-        }
-    }
-
-    private void SetSplashScene(string path)
-    {
-        var sceneRef = new SceneReference
-        {
-            ScenePath = path
-        };
-        splashScene = sceneRef;
-    }
 
 #endif
 }
@@ -144,38 +108,38 @@ public class AssetModificationProcessor : AssetPostprocessor
 
     private static void CheckGameScenes()
     {
-        // if (GameSettings.SelectedSceneLoadSettings != null)
-        // {
-        //     for (int i = 0; i < GameSettings.SelectedSceneLoadSettings.gameSceneList.Count; i++)
-        //     {
-        //         if (!GameSettings.SelectedSceneLoadSettings.gameSceneList[i].IsValidSceneAsset)
-        //         {
-        //             GameSettings.SelectedSceneLoadSettings.gameSceneList.Remove(GameSettings.SelectedSceneLoadSettings
-        //                 .gameSceneList[i]);
-        //             i = 0;
-        //         }
-        //     }
-        //
-        //     for (int i = 0; i < GameSettings.SelectedSceneLoadSettings.otherScenes.Count; i++)
-        //     {
-        //         if (!GameSettings.SelectedSceneLoadSettings.otherScenes[i].IsValidSceneAsset)
-        //         {
-        //             GameSettings.SelectedSceneLoadSettings.otherScenes.Remove(GameSettings.SelectedSceneLoadSettings
-        //                 .otherScenes[i]);
-        //             i = 0;
-        //         }
-        //     }
-        //
-        //     for (int i = 0; i < GameSettings.SelectedSceneLoadSettings.tutorialScenes.Count; i++)
-        //     {
-        //         if (!GameSettings.SelectedSceneLoadSettings.tutorialScenes[i].IsValidSceneAsset)
-        //         {
-        //             GameSettings.SelectedSceneLoadSettings.tutorialScenes.Remove(GameSettings.SelectedSceneLoadSettings
-        //                 .tutorialScenes[i]);
-        //             i = 0;
-        //         }
-        //     }
-        // }
+        if (GameSettings.SelectedSceneLoadSettings != null)
+        {
+            for (int i = 0; i < GameSettings.SelectedSceneLoadSettings.gameSceneList.Count; i++)
+            {
+                if (!GameSettings.SelectedSceneLoadSettings.gameSceneList[i].IsValidSceneAsset)
+                {
+                    GameSettings.SelectedSceneLoadSettings.gameSceneList.Remove(GameSettings.SelectedSceneLoadSettings
+                        .gameSceneList[i]);
+                    i = 0;
+                }
+            }
+
+            for (int i = 0; i < GameSettings.SelectedSceneLoadSettings.otherScenes.Count; i++)
+            {
+                if (!GameSettings.SelectedSceneLoadSettings.otherScenes[i].IsValidSceneAsset)
+                {
+                    GameSettings.SelectedSceneLoadSettings.otherScenes.Remove(GameSettings.SelectedSceneLoadSettings
+                        .otherScenes[i]);
+                    i = 0;
+                }
+            }
+
+            for (int i = 0; i < GameSettings.SelectedSceneLoadSettings.tutorialScenes.Count; i++)
+            {
+                if (!GameSettings.SelectedSceneLoadSettings.tutorialScenes[i].IsValidSceneAsset)
+                {
+                    GameSettings.SelectedSceneLoadSettings.tutorialScenes.Remove(GameSettings.SelectedSceneLoadSettings
+                        .tutorialScenes[i]);
+                    i = 0;
+                }
+            }
+        }
     }
 }
 

@@ -7,16 +7,6 @@ namespace VP.Nest
     {
         public const string SETTINGSFILEPATH = "GameSettings";
 
-
-        public static GameSettingsSO GameSettingsSo
-        {
-            get
-            {
-                GameSettingsSO gameSettingsSo = Resources.Load<GameSettingsSO>(SETTINGSFILEPATH);
-                return gameSettingsSo;
-            }
-        }
-
         public static SceneLoadSettingsSO SelectedSceneLoadSettings
         {
             get

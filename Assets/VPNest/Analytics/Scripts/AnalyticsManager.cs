@@ -1,14 +1,18 @@
 using UnityEngine;
 using VP.Nest.SceneManagement;
 using System.Collections;
-using NotImplementedException = System.NotImplementedException;
+using System.Collections.Generic;
 
 #if VP_FB_EXISTS
 using Facebook.Unity;
 #endif
-
 #if VP_ELEPHANT_EXISTS
 using ElephantSDK;
+#endif
+
+#if VP_BYRD_EXISTS
+using ByrdSDK;
+
 #endif
 
 
@@ -19,14 +23,11 @@ namespace VP.Nest.Analytics
         private void Awake()
         {
 #if VP_FB_EXISTS
-            if (FB.IsInitialized)
-            {
-                FB.ActivateApp();
-            }
-            else
-            {
-                FB.Init(InitCallback);
-            }
+			if (FB.IsInitialized) {
+				FB.ActivateApp();
+			} else {
+				FB.Init(InitCallback);
+			}
 #endif
 
             DontDestroyOnLoad(gameObject);
@@ -38,23 +39,34 @@ namespace VP.Nest.Analytics
 #if VP_ELEPHANT_EXISTS || VP_BYRD_EXISTS
             StartCoroutine(LoadLevelScene());
 #else
-            GameManager.Instance.LoadCurrentLevelScene();
+			GameManager.Instance.LoadCurrentLevelScene();
 #endif
         }
 
         private IEnumerator LoadLevelScene()
         {
-            float timer = 2;
 #if VP_ELEPHANT_EXISTS || VP_BYRD_EXISTS
-            float timeoutSec = 999;
-
+            float timeoutSec = 5;
 #endif
 
 #if VP_ELEPHANT_EXISTS
-            while (!ElephantUI.isSDKReady)
+			while (!ElephantUI.isSDKReady) {
+
+			timeoutSec -= Time.deltaTime;
+
+			if(timeoutSec<0){
+			break;
+			}
+			
+				yield return null;
+			}
+#endif
+
+#if VP_BYRD_EXISTS
+            while (!Byrd.IsInit)
             {
                 timeoutSec -= Time.deltaTime;
-                timer -= Time.deltaTime;
+
                 if (timeoutSec < 0)
                 {
                     break;
@@ -63,21 +75,19 @@ namespace VP.Nest.Analytics
                 yield return null;
             }
 #endif
-
-            while (timer > 0)
-            {
-                timer -= Time.deltaTime;
-                yield return null;
-            }
-
             yield return null;
+
             GameManager.Instance.LoadCurrentLevelScene();
         }
 
         public static void LogLevelStartEvent(int level)
         {
 #if VP_ELEPHANT_EXISTS
-            Elephant.LevelStarted(level);
+			Elephant.LevelStarted(level);
+#endif
+
+#if VP_BYRD_EXISTS
+            Byrd.SendProgressionData(LevelEvent.Start);
 #endif
         }
 
@@ -86,13 +96,28 @@ namespace VP.Nest.Analytics
             if (score != null)
             {
 #if VP_ELEPHANT_EXISTS
-                Elephant.LevelFailed(level, Params.New().Set("score", score.Value));
+				Elephant.LevelFailed(level, Params.New().Set("score", score.Value));
+#endif
+
+#if VP_BYRD_EXISTS
+
+                var customData = new ByrdSDK.DataModels.CustomData();
+
+                customData.AddObject("score", score.Value);
+
+                Byrd.SendProgressionData(LevelEvent.Fail, customData);
 #endif
             }
             else
             {
 #if VP_ELEPHANT_EXISTS
-                Elephant.LevelFailed(level);
+				Elephant.LevelFailed(level);
+#endif
+
+
+#if VP_BYRD_EXISTS
+
+                Byrd.SendProgressionData(LevelEvent.Fail);
 #endif
             }
         }
@@ -102,40 +127,42 @@ namespace VP.Nest.Analytics
             if (score != null)
             {
 #if VP_ELEPHANT_EXISTS
-                Elephant.LevelCompleted(level, Params.New().Set("score", score.Value));
+				Elephant.LevelCompleted(level, Params.New().Set("score", score.Value));
+#endif
+
+
+#if VP_BYRD_EXISTS
+
+                var customData = new ByrdSDK.DataModels.CustomData();
+
+                customData.AddObject("score", score.Value);
+
+                Byrd.SendProgressionData(LevelEvent.Complete, customData);
 #endif
             }
             else
             {
 #if VP_ELEPHANT_EXISTS
-                Elephant.LevelCompleted(level);
+				Elephant.LevelCompleted(level);
+#endif
+
+
+#if VP_BYRD_EXISTS
+
+                Byrd.SendProgressionData(LevelEvent.Complete);
 #endif
             }
         }
 
 #if VP_FB_EXISTS
-        private static void InitCallback()
-        {
-            if (FB.IsInitialized)
-            {
-                FB.ActivateApp();
-            }
-            else
-            {
-                Debug.Log("Failed to Initialize the Facebook SDK");
-            }
-        }
+		private static void InitCallback()
+		{
+			if (FB.IsInitialized) {
+				FB.ActivateApp();
+			} else {
+				Debug.Log("Failed to Initialize the Facebook SDK");
+			}
+		}
 #endif
-        public static void LogStoreClickedEvent()
-        {
-        }
-
-        public static void LogRandomSkinUnlockEvent(string unlockableClusterID, int unlockPrice = 0)
-        {
-        }
-
-        public static void LogMoneyRewardedEvent()
-        {
-        }
     }
 }

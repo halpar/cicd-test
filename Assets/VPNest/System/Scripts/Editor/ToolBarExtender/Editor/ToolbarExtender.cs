@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
@@ -38,9 +38,8 @@ namespace UnityToolbarExtender
 			m_toolCount = toolIcons != null ? ((Array) toolIcons.GetValue(null)).Length : 5;
 #endif
 	
-			ToolbarCallback.OnToolbarGUI = OnGUI;
-			ToolbarCallback.OnToolbarGUILeft = GUILeft;
-			ToolbarCallback.OnToolbarGUIRight = GUIRight;
+			ToolbarCallback.OnToolbarGUI -= OnGUI;
+			ToolbarCallback.OnToolbarGUI += OnGUI;
 		}
 
 #if UNITY_2019_3_OR_NEWER
@@ -146,24 +145,6 @@ namespace UnityToolbarExtender
 				GUILayout.EndHorizontal();
 				GUILayout.EndArea();
 			}
-		}
-		
-		public static void GUILeft() {
-			GUILayout.BeginHorizontal();
-			foreach (var handler in LeftToolbarGUI)
-			{
-				handler();
-			}
-			GUILayout.EndHorizontal();
-		}
-		
-		public static void GUIRight() {
-			GUILayout.BeginHorizontal();
-			foreach (var handler in RightToolbarGUI)
-			{
-				handler();
-			}
-			GUILayout.EndHorizontal();
 		}
 	}
 }

@@ -5,54 +5,37 @@ using UnityEditor.Recorder;
 using UnityEditor.Recorder.Input;
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine.Events;
-using VP.Nest.UI;
-#endif
 
 namespace VP.Nest.System.NestScreenRecorder
 {
     public class NestScreenRecorder : Singleton<NestScreenRecorder>
     {
-#if UNITY_EDITOR
-        [Header("Settings")] [SerializeField] private RecorderData recorderData;
-        [SerializeField] private bool shouldCreateAHand = true;
+        [Header("Settings")] 
+        [SerializeField] private RecorderData recorderData;
         [SerializeField] private bool captureUI = true;
 
-        [Header("Video Settings")] [SerializeField, Tooltip("Select MOV format for higher video quality")]
+        [Header("Video Settings")] 
+        [SerializeField,Tooltip("Select MOV format for higher video quality")] 
         private VideoOutputFormat targetVideoOutputFormat = VideoOutputFormat.MP4;
-
         [SerializeField] private VideoQuality targetVideoQuality = VideoQuality.Low;
-        
-
-        [SerializeField]
-        private VideoOutputResolutions targetVideoResolution = VideoOutputResolutions._1280x1600_Creative;
-
-        [SerializeField, Tooltip("Start video recording as soon as game starts.")]
+        [SerializeField,Tooltip("Start video recording as soon as game starts.")] 
         private bool autoStartVideoRecording = false;
-
+        
         public enum VideoQuality
         {
             Low,
             Medium,
             High
         }
-
+        
         public enum VideoOutputFormat
         {
             MP4,
             MOV
         }
-
-        public enum VideoOutputResolutions
-        {
-            _886x1920_6_5,
-            _1080x1920_5_5,
-            _1200x1600_12_9,
-            _1280x1600_Creative,
-        }
-
+    
         private RecorderController recorderController;
         private RecorderControllerSettings recorderControllerSettings;
         private ImageRecorderSettings imageRecorderSettings;
@@ -60,7 +43,6 @@ namespace VP.Nest.System.NestScreenRecorder
         private string imageOutputFolder;
         private string videoOutputFolder;
         private string lastRecordedImageName = "null_image";
-        private GameObject hand;
 
         private bool isImageRecording = false;
         private bool isVideoRecording = false;
@@ -71,20 +53,19 @@ namespace VP.Nest.System.NestScreenRecorder
 
         private void Reset()
         {
-            if (Resources.Load<RecorderData>("RecorderData") != null)
+            if (Resources.Load<RecorderData>("RecorderData")!= null)
             {
                 recorderData = Resources.Load<RecorderData>("RecorderData");
             }
             else
             {
                 Debug.LogError($"{GetType().Name} -> RecorderData.asset file not found in Resources folder!");
-            }
+            }           
         }
 
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
-            hand = PrefabUtility.LoadPrefabContents("Assets/VPNest/Recorder/Prefabs/HandCreative.prefab");
             IsRecording = false;
         }
 
@@ -105,8 +86,7 @@ namespace VP.Nest.System.NestScreenRecorder
                 }
                 else
                 {
-                    Debug.LogError(
-                        $"{GetType().Name} -> Unable autostart video recording. Please switch to Gameview. Recorder can not work with Simulator.");
+                    Debug.LogError($"{GetType().Name} -> Unable autostart video recording. Please switch to Gameview. Recorder can not work with Simulator.");
                 }
             }
         }
@@ -117,24 +97,19 @@ namespace VP.Nest.System.NestScreenRecorder
 
             if (IsDeviceSimulatorRunning == false)
             {
-                if ((Input.GetKeyDown(KeyCode.Alpha0) || (Input.GetKeyDown(KeyCode.Keypad0))) &&
-                    isImageRecording == false && isVideoRecording == false)
+                if ((Input.GetKeyDown(KeyCode.Alpha0) || (Input.GetKeyDown(KeyCode.Keypad0))) && isImageRecording == false && isVideoRecording == false)
                 {
                     StartCoroutine(TakeAllScreenShotsAsync());
                 }
-                else if ((Input.GetKeyDown(KeyCode.Alpha0) || (Input.GetKeyDown(KeyCode.Keypad0))) &&
-                         isImageRecording == true)
+                else if ((Input.GetKeyDown(KeyCode.Alpha0) || (Input.GetKeyDown(KeyCode.Keypad0))) && isImageRecording == true)
                 {
-                    Debug.LogError(
-                        $"{GetType().Name} -> Recorder is busy! Please wait until recording process completed.");
+                    Debug.LogError($"{GetType().Name} -> Recorder is busy! Please wait until recording process completed.");
                 }
 
                 if (Input.GetKeyDown(KeyCode.Alpha9) || Input.GetKeyDown(KeyCode.Keypad9))
                 {
                     TakeVideoCapture();
                 }
-                
-                if (shouldCreateAHand && isVideoRecording) FollowHand();
             }
             else
             {
@@ -147,7 +122,7 @@ namespace VP.Nest.System.NestScreenRecorder
             OnRecordingStateChanged -= CheckRecordingState;
         }
 
-        [MenuItem("Nest/VP Nest Screen Recorder", false, 29)]
+        [MenuItem("Nest/VP Nest Screen Recorder/Create Recorder Instance", false)]
         public static void CreateNestScreenRecorder()
         {
             if (FindObjectOfType<NestScreenRecorder>() == null)
@@ -156,7 +131,7 @@ namespace VP.Nest.System.NestScreenRecorder
             }
             else
             {
-                Debug.LogError($"NestScreenRecorder -> Recorder is already exist in hierarchy!");
+                Debug.LogError($"NestScreenRecorder -> Recorder is already exist in hierarcy!");
             }
         }
 
@@ -184,53 +159,19 @@ namespace VP.Nest.System.NestScreenRecorder
             {
                 movieRecorderSettings.OutputFormat = MovieRecorderSettings.VideoRecorderOutputFormat.MOV;
             }
-
+            
             movieRecorderSettings.VideoBitRateMode = GetTargetVideoBitrateMode(movieRecorderSettings);
 
-            if (targetVideoResolution == VideoOutputResolutions._886x1920_6_5)
+            movieRecorderSettings.ImageInputSettings = new GameViewInputSettings
             {
-                movieRecorderSettings.ImageInputSettings = new GameViewInputSettings
-                {
-                    OutputWidth = 886,
-                    OutputHeight = 1920
-                };
-            }
-            else if (targetVideoResolution == VideoOutputResolutions._1080x1920_5_5)
-            {
-                movieRecorderSettings.ImageInputSettings = new GameViewInputSettings
-                {
-                    OutputWidth = 1080,
-                    OutputHeight = 1920
-                };
-            }
-            else if (targetVideoResolution == VideoOutputResolutions._1200x1600_12_9)
-            {
-                movieRecorderSettings.ImageInputSettings = new GameViewInputSettings
-                {
-                    OutputWidth = 1200,
-                    OutputHeight = 1600
-                };
-            }
-            else if (targetVideoResolution == VideoOutputResolutions._1280x1600_Creative)
-            {
-                movieRecorderSettings.ImageInputSettings = new GameViewInputSettings
-                {
-                    OutputWidth = 1280,
-                    OutputHeight = 1600
-                };
-            }
-
-            // movieRecorderSettings.ImageInputSettings = new GameViewInputSettings
-            // {
-            //     OutputWidth = 1280,
-            //     OutputHeight = 1600
-            // };
+                OutputWidth = 1280,
+                OutputHeight = 1600
+            };
 
             movieRecorderSettings.AudioInputSettings.PreserveAudio = false;
-
-            movieRecorderSettings.OutputFile = videoOutputFolder + "/" +
-                                               $"{DefaultWildcard.Project}_{DefaultWildcard.Resolution}_{DefaultWildcard.Take}";
-
+            
+            movieRecorderSettings.OutputFile = videoOutputFolder + "/" + $"{DefaultWildcard.Project}_{DefaultWildcard.Resolution}_{DefaultWildcard.Take}";
+            
             // movieRecorderSettings.OutputFile = Path.Combine(videoOutputFolder,
             //     $"{DefaultWildcard.Project}_{DefaultWildcard.Resolution}_{DefaultWildcard.Take}"); ;
 
@@ -245,10 +186,10 @@ namespace VP.Nest.System.NestScreenRecorder
             recorderController.StartRecording();
             isVideoRecording = true;
             recorderData.videoTakeCount += 1;
+#if UNITY_EDITOR
             EditorUtility.SetDirty(recorderData);
+#endif
             OnRecordingStateChanged.Invoke();
-            
-            if (shouldCreateAHand) CreateHand();
 
             Debug.Log($"{GetType().Name} -> Video recording started!");
         }
@@ -311,7 +252,9 @@ namespace VP.Nest.System.NestScreenRecorder
             SetUIVisibility(true); //make sure ui is visible after screenshots taken
 
             recorderData.screenshotTakeCount += 1;
+#if UNITY_EDITOR
             EditorUtility.SetDirty(recorderData);
+#endif
 
 
             isImageRecording = false;
@@ -338,9 +281,8 @@ namespace VP.Nest.System.NestScreenRecorder
             //imageRecorderSettings.Take = GetImageFileCount() / 3;
             imageRecorderSettings.Take = recorderData.screenshotTakeCount;
 
-            imageRecorderSettings.OutputFile = imageOutputFolder + "/" +
-                                               $"{DefaultWildcard.Project}_{DefaultWildcard.Resolution}_{DefaultWildcard.Take}";
-
+            imageRecorderSettings.OutputFile = imageOutputFolder+ "/" + $"{DefaultWildcard.Project}_{DefaultWildcard.Resolution}_{DefaultWildcard.Take}";
+            
             // imageRecorderSettings.OutputFile = Path.Combine(imageOutputFolder,
             //     $"{DefaultWildcard.Project}_{DefaultWildcard.Resolution}_{DefaultWildcard.Take}");
 
@@ -350,8 +292,7 @@ namespace VP.Nest.System.NestScreenRecorder
                 OutputHeight = imageHeight,
             };
 
-            lastRecordedImageName =
-                $"{imageWidth}x{imageHeight}_{imageRecorderSettings.Take}.{imageRecorderSettings.OutputFormat}";
+            lastRecordedImageName = $"{imageWidth}x{imageHeight}_{imageRecorderSettings.Take}.{imageRecorderSettings.OutputFormat}";
         }
 
         private IEnumerator TakeScreenshot()
@@ -368,7 +309,7 @@ namespace VP.Nest.System.NestScreenRecorder
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
-
+            
 
             Debug.Log($"{GetType().Name} -> {lastRecordedImageName}");
         }
@@ -437,7 +378,7 @@ namespace VP.Nest.System.NestScreenRecorder
                 return VideoBitrateMode.Low;
             }
         }
-
+        
         private void CheckRecordingState()
         {
             if (isImageRecording == true || isVideoRecording == true)
@@ -454,34 +395,22 @@ namespace VP.Nest.System.NestScreenRecorder
 
         private void CheckDeviceSimulatorState()
         {
-            if (Application.isPlaying)
+            if (Application.isPlaying == true)
             {
                 //IsDeviceSimulatorRunning = Application.isMobilePlatform ? true : false;
-                if (Application.isMobilePlatform == true
+                if (Application.isMobilePlatform == true 
                     && EditorWindow.focusedWindow != null
                     && EditorWindow.focusedWindow.ToString() == " (Unity.DeviceSimulator.SimulatorWindow)")
                 {
-
                     IsDeviceSimulatorRunning = true;
                 }
                 else
                 {
-                    IsDeviceSimulatorRunning = false;
+                    IsDeviceSimulatorRunning = false; 
                 }
             }
         }
-
-        private void CreateHand()
-        {
-            hand = Instantiate(hand, UIManager.Instance.InGameUI.transform);
-        }
-
-        private void FollowHand()
-        {
-            hand.transform.position = Input.mousePosition;
-        }
-        
-
-#endif
     }
 }
+
+#endif

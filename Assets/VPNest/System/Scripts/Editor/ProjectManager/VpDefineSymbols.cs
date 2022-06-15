@@ -15,7 +15,7 @@ namespace VP.Nest.System.Editor
 	{
 		private const string VpFbExists = "VP_FB_EXISTS";
 		private const string VpElephantExists = "VP_ELEPHANT_EXISTS";
-		//private const string VpByrdExists = "VP_BYRD_EXISTS";
+		private const string VpBirdExists = "VP_BYRD_EXISTS";
 
 		private static readonly List<string> Symbols = new List<string>();
 
@@ -23,7 +23,7 @@ namespace VP.Nest.System.Editor
 		{
 			if (CheckSdkStatus("Facebook.Unity.Settings")) Symbols.Add("VP_FB_EXISTS");
 			if (CheckSdkStatus("ElephantSDK")) Symbols.Add("VP_ELEPHANT_EXISTS");
-			//if (CheckSdkStatus("ByrdSDK")) Symbols.Add("VP_BYRD_EXISTS");
+			if (CheckSdkStatus("ByrdSDK")) Symbols.Add("VP_BYRD_EXISTS");
 
 			var scriptingDefinesString =
 				PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
@@ -37,9 +37,9 @@ namespace VP.Nest.System.Editor
 				scriptingDefinesStringList.Remove(VpElephantExists);
 			}
 
-			// if (scriptingDefinesStringList.Contains(VpByrdExists) && !Symbols.Contains(VpByrdExists)) {
-			// 	scriptingDefinesStringList.Remove(VpByrdExists);
-			// }
+			if (scriptingDefinesStringList.Contains(VpBirdExists) && !Symbols.Contains(VpBirdExists)) {
+				scriptingDefinesStringList.Remove(VpBirdExists);
+			}
 
 			scriptingDefinesStringList.AddRange(Symbols.Except(scriptingDefinesStringList));
 

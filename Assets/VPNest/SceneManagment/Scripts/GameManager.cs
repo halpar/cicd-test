@@ -1,9 +1,7 @@
 ﻿using System.Collections;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
-using VP.Nest.Utilities;
 
 namespace VP.Nest.SceneManagement
 {
@@ -19,8 +17,7 @@ namespace VP.Nest.SceneManagement
         {
             DontDestroyOnLoad(gameObject);
             sceneLoadSettingsSo = GameSettings.SelectedSceneLoadSettings;
-            Application.targetFrameRate = 60;
-            
+
             SceneManager.sceneLoaded +=
                 (arg0, arg1) =>
                 {
@@ -34,10 +31,10 @@ namespace VP.Nest.SceneManagement
 
         private void OnNewGameSceneLoaded()
         {
-            // if (PlayerPrefKeys.ReachedLevel >= 2)
-            // {
-            //     RequestStoreReviewPrompt();
-            // }
+            if (PlayerPrefKeys.ReachedLevel >= 2)
+            {
+                RequestStoreReviewPrompt();
+            }
         }
 
         public void LoadLevelSelectScene(bool showLoadingScene = false)
@@ -54,48 +51,28 @@ namespace VP.Nest.SceneManagement
 
         public void LoadCurrentLevelScene(bool showLoadingScene = false)
         {
-            DOTween.CompleteAll();  
-            DOTween.Clear();
-            
             var level = PlayerPrefKeys.CurrentLevel;
             int levelCount;
-
-            //   Debug.Log("level " + level); 
-
             if (level <= sceneLoadSettingsSo.tutorialScenes.Count)
                 levelCount = sceneLoadSettingsSo.tutorialScenes.Count;
             else
-            {
                 levelCount = sceneLoadSettingsSo.gameSceneList.Count;
-                level -= sceneLoadSettingsSo.tutorialScenes.Count;
-            }
-
-            //   Debug.Log("levelcount " + levelCount);
 
             var currentGameSceneIndexForLevel = level % levelCount;
-
-            //    Debug.Log("currentGameSceneIndexForLevel " + currentGameSceneIndexForLevel);
 
             var selectedGameSceneIndex =
                 currentGameSceneIndexForLevel == 0 ? levelCount : currentGameSceneIndexForLevel;
             string selectedGameSceneName;
 
-
-            if (PlayerPrefKeys.CurrentLevel <= sceneLoadSettingsSo.tutorialScenes.Count)
+            Debug.Log("selectedGameSceneIndex " + selectedGameSceneIndex);
+            if (level <= sceneLoadSettingsSo.tutorialScenes.Count)
             {
-                //       Debug.Log("selectedGameSceneIndex " + (selectedGameSceneIndex - 1));
                 selectedGameSceneName = sceneLoadSettingsSo.tutorialScenes[selectedGameSceneIndex - 1].Name;
             }
             else
             {
-                //      Debug.Log("selectedGameSceneIndex " +
-                //                (selectedGameSceneIndex - sceneLoadSettingsSo.tutorialScenes.Count - 1));
-
-                selectedGameSceneName = sceneLoadSettingsSo
-                    .gameSceneList[selectedGameSceneIndex - 1].Name;
+                selectedGameSceneName = sceneLoadSettingsSo.gameSceneList[selectedGameSceneIndex - 1].Name;
             }
-
-            //    Debug.Log("selectedGameSceneName " + selectedGameSceneName);
 
             if (showLoadingScene)
             {
@@ -166,12 +143,10 @@ namespace VP.Nest.SceneManagement
         // Default is set to Level 1
         public static void RequestStoreReviewPrompt()
         {
-#if UNITY_IOS
             if (PlayerPrefs.HasKey("Rated")) return;
 
             UnityEngine.iOS.Device.RequestStoreReview();
             PlayerPrefs.SetInt("Rated", 1);
-#endif
         }
     }
 }

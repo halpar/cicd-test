@@ -13,7 +13,7 @@ namespace VP.Nest.Haptic
         SoftImpact,
         None
     }
-
+    
     public enum AdvancedHapticType
     {
         Boing,

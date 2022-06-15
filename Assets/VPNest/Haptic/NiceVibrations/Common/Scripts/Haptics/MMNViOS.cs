@@ -19,6 +19,7 @@ namespace MoreMountains.NiceVibrations
         // It's a pretty straightforward implementation of iOS's UIFeedbackGenerator's methods.
         // You can learn more about them there : https://developer.apple.com/documentation/uikit/uifeedbackgenerator
 
+#if UNITY_IOS && !UNITY_EDITOR
 			[DllImport ("__Internal")]
 			private static extern void MMNViOS_InstantiateFeedbackGenerators();
 			[DllImport ("__Internal")]
@@ -41,18 +42,19 @@ namespace MoreMountains.NiceVibrations
 			private static extern void MMNViOS_RigidImpactHaptic();
 			[DllImport ("__Internal")]
 			private static extern void MMNViOS_SoftImpactHaptic();
-        // private static void MMNViOS_InstantiateFeedbackGenerators() { }
-        //     private static void MMNViOS_ReleaseFeedbackGenerators() { }
-        //     private static void MMNViOS_SelectionHaptic() { }
-        //     private static void MMNViOS_SuccessHaptic() { }
-        //     private static void MMNViOS_WarningHaptic() { }
-        //     private static void MMNViOS_FailureHaptic() { }
-        //     private static void MMNViOS_LightImpactHaptic() { }
-        //     private static void MMNViOS_MediumImpactHaptic() { }
-        //     private static void MMNViOS_HeavyImpactHaptic() { }
-        //     private static void MMNViOS_RigidImpactHaptic() { }
-        //     private static void MMNViOS_SoftImpactHaptic() { }
-
+#else
+        private static void MMNViOS_InstantiateFeedbackGenerators() { }
+            private static void MMNViOS_ReleaseFeedbackGenerators() { }
+            private static void MMNViOS_SelectionHaptic() { }
+            private static void MMNViOS_SuccessHaptic() { }
+            private static void MMNViOS_WarningHaptic() { }
+            private static void MMNViOS_FailureHaptic() { }
+            private static void MMNViOS_LightImpactHaptic() { }
+            private static void MMNViOS_MediumImpactHaptic() { }
+            private static void MMNViOS_HeavyImpactHaptic() { }
+            private static void MMNViOS_RigidImpactHaptic() { }
+            private static void MMNViOS_SoftImpactHaptic() { }
+#endif
         private static bool iOSHapticsInitialized = false;
 
         /// <summary>

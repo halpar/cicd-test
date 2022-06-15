@@ -50,10 +50,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eaceb79be25c453da2729392a80be3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1849972745827262774}
-  moneyIconPrefab: {fileID: 99252334073556413, guid: 14165177ae89646e1ba8fc7f5a1d538a,
-    type: 3}
-  moneyAnimationDuration: 1.5
 --- !u!1001 &3893052325017672159
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154,7 +150,7 @@ PrefabInstance:
     - target: {fileID: 1184862067148300662, guid: 5787c5f9fc52746e9bd1f3cff19cb095,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -116
+      value: -110
       objectReference: {fileID: 0}
     - target: {fileID: 1184862067148300662, guid: 5787c5f9fc52746e9bd1f3cff19cb095,
         type: 3}
@@ -196,12 +192,6 @@ PrefabInstance:
 --- !u!224 &2771859687364786345 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1184862067148300662, guid: 5787c5f9fc52746e9bd1f3cff19cb095,
-    type: 3}
-  m_PrefabInstance: {fileID: 3893052325017672159}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1849972745827262774 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3434709534719867113, guid: 5787c5f9fc52746e9bd1f3cff19cb095,
     type: 3}
   m_PrefabInstance: {fileID: 3893052325017672159}
   m_PrefabAsset: {fileID: 0}
@@ -326,7 +316,7 @@ PrefabInstance:
         type: 3}
       propertyPath: target
       value: 
-      objectReference: {fileID: 1849972745827262774}
+      objectReference: {fileID: 2771859687364786345}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f79390b5fe7f34f56b1e15d2966b0786, type: 3}
 --- !u!224 &2065542510084008243 stripped

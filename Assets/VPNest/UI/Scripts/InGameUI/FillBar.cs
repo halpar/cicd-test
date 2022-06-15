@@ -1,100 +1,87 @@
-﻿using DG.Tweening;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
+using UnityEngine.UI.ProceduralImage;
+using Image = UnityEngine.UI.ProceduralImage.Image;
+
 
 namespace VP.Nest.UI.InGame
 {
-	public class FillBar : MonoBehaviour
-	{
-		public UnityAction OnComplete;
+    public class FillBar : MonoBehaviour
+    {
+        [SerializeField] Image fillImage;
+        private bool isFill;
+        private float startFillAmount = 0;
+        private float endFillAmount = 1;
 
-		[SerializeField] private Image fillImage;
-		// private bool isFill;
-		private float startFillAmount = 0;
-		private float endFillAmount = 1;
+        [SerializeField] Color startColor = Color.red;
+        [SerializeField] Color endColor = Color.green;
+        [SerializeField] private AnimationCurve animationCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
-		[Space]
-		[ColorUsageAttribute(true, true)]
-		[SerializeField] private Color startColor = Color.red;
-		[ColorUsageAttribute(true, true)]
-		[SerializeField] private Color endColor = Color.green;
-		[SerializeField] private AnimationCurve animationCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        private float maxValue = 0;
 
-		private float maxValue = 1;
-		private float currentAmount;
+        public UnityAction OnComplate;
 
-		private static readonly int TopLeftColor = Shader.PropertyToID("_TopLeftColor");
-		private static readonly int TopRightColor = Shader.PropertyToID("_TopRightColor");
-		private static readonly int BottomLeftColor = Shader.PropertyToID("_BottomLeftColor");
-		private static readonly int BottomRightColor = Shader.PropertyToID("_BottomRightColor");
+        private float currentAmount;
 
-		private void Awake()
-		{
-			Setup();
-		}
+        private void Awake()
+        {
+            if (fillImage)
+            {
+                fillImage.fillAmount = startFillAmount;
+                fillImage.color = startColor;
+            }
+        }
 
-		private void Setup()
-		{
-			if (!fillImage) return;
+        public void SetupFillBar(float maxValue, bool isReverse = false)
+        {
+            if (isReverse)
+            {
+                startFillAmount = 1;
+                endFillAmount = 0;
+            }
+            else
+            {
+                startFillAmount = 0;
+                endFillAmount = 1;
+            }
 
-			fillImage.fillAmount = startFillAmount;
+            this.maxValue = maxValue;
+            isFill = false;
+            fillImage.fillAmount = startFillAmount;
+            fillImage.color = startColor;
+            currentAmount = 0;
+        }
 
-			fillImage.material.SetColor(TopLeftColor, startColor);
-			fillImage.material.SetColor(BottomLeftColor, startColor);
-			fillImage.material.SetColor(TopRightColor, endColor);
-			fillImage.material.SetColor(BottomRightColor, endColor);
-		}
+        public void ChangeFillBar(float value)
+        {
+            currentAmount += value;
+            UpdateFillBar(currentAmount);
+        }
 
-		public void SetupFillBar(float maxFill, bool isReverse = false)
-		{
-			if (isReverse)
-			{
-				startFillAmount = 1;
-				endFillAmount = 0;
-			}
-			else
-			{
-				startFillAmount = 0;
-				endFillAmount = 1;
-			}
+        public void SetFillBar(float value)
+        {
+            currentAmount = value;
+            UpdateFillBar(currentAmount);
+        }
 
-			maxValue = maxFill;
-			// isFill = false;
-			fillImage.fillAmount = startFillAmount;
-			currentAmount = 0;
-		}
-
-		public void ChangeFillBar(float value, float time)
-		{
-			currentAmount += value;
-			UpdateFillBar(currentAmount, time);
-		}
-
-		public void SetFillBar(float value, float time)
-		{
-			currentAmount = value;
-			UpdateFillBar(currentAmount, time);
-		}
-
-		private void UpdateFillBar(float value, float time)
-		{
-			if (maxValue != 0)
-			{
-				float targetValue = value / maxValue;
-				fillImage.DOComplete();
-				fillImage.DOFillAmount(Mathf.Lerp(startFillAmount, endFillAmount, targetValue), time).SetEase(animationCurve).OnComplete(() =>
-				{
-					if (targetValue >= 1)
-						OnComplete?.Invoke();
-				});
-			}
-		}
-
-		[ContextMenu("fill")]
-		private void Fill()
-		{
-			SetFillBar(1, 1);
-		}
-	}
+        private void UpdateFillBar(float value)
+        {
+            if (maxValue != 0 && !isFill)
+            {
+                float targetValue = value / maxValue;
+                fillImage.fillAmount = Mathf.Lerp(startFillAmount, endFillAmount, targetValue);
+                fillImage.color = Color.Lerp(startColor, endColor, animationCurve.Evaluate(targetValue));
+                if (targetValue >= 1)
+                {
+                    isFill = true;
+                    OnComplate?.Invoke();
+                }
+            }
+        }
+    }
 }

@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,7 +20,6 @@ namespace VP.Nest.System.Editor
                 importer.SaveAndReimport();
                 return;
             }
-            
 
             if (assetPath.Contains("VP_NC")) return;
 
@@ -29,10 +27,6 @@ namespace VP.Nest.System.Editor
             if (textureImporter.textureType == TextureImporterType.Default &&
                 textureImporter.textureShape == TextureImporterShape.Texture2D)
             {
-                
-                string assetName = assetPath.Split("/").Last();
-                if (assetName.StartsWith("s_") || assetName.StartsWith("S_")) textureImporter.textureType = TextureImporterType.Sprite;
-
                 if (textureImporter.DoesSourceTextureHaveAlpha())
                 {
                     textureImporter.alphaIsTransparency = true;

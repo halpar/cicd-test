@@ -9,7 +9,7 @@ namespace VP.Nest.Haptic
     {
         private static bool isLocked = false;
         private float currentTime = 0;
-        public float maxTime = 0.1f;
+        private float maxTime = 0.4f;
 
         private static bool isContinuousHapticContinue;
         private static float continuousDurationTime = 1;
@@ -28,7 +28,7 @@ namespace VP.Nest.Haptic
         {
             if (isLocked)
             {
-                currentTime += Time.unscaledDeltaTime;
+                currentTime += Time.deltaTime;
                 if (currentTime >= maxTime)
                 {
                     currentTime = 0;
@@ -36,9 +36,10 @@ namespace VP.Nest.Haptic
                 }
             }
 
+
             if (isContinuousHapticContinue)
             {
-                continuousDurationTime -= Time.unscaledDeltaTime;
+                continuousDurationTime -= Time.deltaTime;
                 if (continuousDurationTime <= 0)
                 {
                     isContinuousHapticContinue = false;
@@ -60,20 +61,34 @@ namespace VP.Nest.Haptic
 
             isLocked = true;
 
-            var hapticTypeIndex = (int)hapticType;
-            var mmvHaptic = (HapticTypes)hapticTypeIndex;
-
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                mmvHaptic = HapticTypes.Selection;
-            }
-
+            var hapticTypeIndex = (int) hapticType;
+            var mmvHaptic = (HapticTypes) hapticTypeIndex;
             MMVibrationManager.Haptic(mmvHaptic);
 #if UNITY_EDITOR
             //   Debug.Log($"{hapticType} Triggered!");
 #endif
         }
-        
+
+        public static void Haptic(AdvancedHapticType hapticType)
+        {
+            if (isContinuousHapticContinue)
+                return;
+
+            if (isLocked)
+                return;
+
+            isLocked = true;
+
+
+            string hapticTypeName = hapticType.ToString();
+            var jsonFile = Resources.Load<TextAsset>("AHAP/NV" + hapticTypeName);
+            MMVibrationManager.AdvancedHapticPatternIOS(jsonFile.text);
+#if UNITY_EDITOR
+            Debug.Log($"{hapticType} Triggered!");
+#endif
+        }
+
+
         public static void StartContinuousHaptic(float intensity, float sharpness, float duration = 1)
         {
             if (isContinuousHapticContinue)
